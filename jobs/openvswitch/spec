@@ -1,0 +1,13 @@
+---
+name: openvswitch
+
+templates:
+  dbserver_ctl.erb: bin/dbserver_ctl
+  vswitchd_ctl.erb: bin/vswitchd_ctl
+  setup_tunnel.erb: bin/setup_tunnel
+  post-start.erb: bin/post-start
+
+packages:
+  - openvswitch
+
+properties: {}

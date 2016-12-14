@@ -1,0 +1,10 @@
+set -e -u
+
+tar xfv python/Python-2.7.10.tgz
+cd Python-2.7.10
+./configure --prefix=${BOSH_INSTALL_TARGET} --enable-shared
+make -j9 && make install
+
+export PATH=$PATH:/var/vcap/packages/python/bin
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py

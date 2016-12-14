@@ -1,0 +1,10 @@
+check process openvswitch-dbserver
+  with pidfile /var/vcap/sys/run/openvswitch/dbserver.pid
+  start program "/var/vcap/jobs/openvswitch/bin/dbserver_ctl start"
+  stop program "/var/vcap/jobs/openvswitch/bin/dbserver_ctl stop"
+
+check process openvswitch-vswitchd
+  with pidfile /var/vcap/sys/run/openvswitch/ovs-vswitchd.pid
+  start program "/var/vcap/jobs/openvswitch/bin/vswitchd_ctl start"
+  stop program "/var/vcap/jobs/openvswitch/bin/vswitchd_ctl stop"
+  depends on openvswitch-dbserver

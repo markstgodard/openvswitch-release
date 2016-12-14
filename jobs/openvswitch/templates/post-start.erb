@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+OVS_PREFIX=/var/vcap/packages/openvswitch
+PATH=${OVS_PREFIX}/bin:${OVS_PREFIX}/sbin:${PATH}
+export PATH
+
+BRNAME="ovs-bridge"
+
+# create bridge
+ovs-vsctl --may-exist add-br ${BRNAME}
+
+ifconfig ${BRNAME} up

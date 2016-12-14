@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+RUN_DIR=/var/vcap/sys/run/openvswitch
+LOG_DIR=/var/vcap/sys/log/openvswitch
+PIDFILE=${RUN_DIR}/ovs-vswitchd.pid
+
+OVS_PREFIX=/var/vcap/packages/openvswitch
+
+PATH=${OVS_PREFIX}/bin:${OVS_PREFIX}/sbin:${PATH}
+export PATH
+
+source /var/vcap/packages/pid_utils/pid_utils.sh
+
+case $1 in
+  start)
+    pid_guard ${PIDFILE} "ovs-vswitchd"
+
+    modprobe openvswitch || true
+    lsmod | grep -q openvswitch
+
+    ovs-vswitchd \
+      --pidfile=${PIDFILE} \
+      --log-file=${LOG_DIR}/vswitchd.log \
+      unix:${RUN_DIR}/db.sock
+
+      ;;
+
+  stop)
+    kill_and_wait $PIDFILE
+    ;;
+
+  *)
+    echo "Usage: vswitchd_ctl {start|stop}"
+    exit 1
+
+    ;;
+
+esac
+
+exit 0

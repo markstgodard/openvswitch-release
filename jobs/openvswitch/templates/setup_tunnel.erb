@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+OVS_PREFIX=/var/vcap/packages/openvswitch
+PATH=${OVS_PREFIX}/bin:${OVS_PREFIX}/sbin:${PATH}
+export PATH
+
+IP_ADDR=$1
+BRNAME="ovs-bridge"
+TUNNAME="remote-tun"
+TUNPORT="10"
+
+# setup tunnel
+# ovs-vsctl add-br ${BRNAME}
+
+ovs-vsctl add-port ${BRNAME} ${TUNNAME} -- set interface ${TUNNAME} type=vxlan option:remote_ip=${IP_ADDR} option:key=flow ofport_request=${TUNPORT}
+
+# ifconfig ${BRNAME} up
+
+ovs-ofctl add-flow ${BRNAME} 'table=0,actions=resubmit(,1)'
+
+ovs-ofctl add-flow ${BRNAME} table=1,priority=100,actions=normal

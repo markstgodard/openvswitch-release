@@ -1,0 +1,8 @@
+---
+name: openvswitch
+
+dependencies:
+- python
+
+files:
+- openvswitch/openvswitch-2.6.1.tgz

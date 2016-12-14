@@ -1,0 +1,56 @@
+#!/bin/bash -e
+
+DATA_DIR=/var/vcap/data/openvswitch
+RUN_DIR=/var/vcap/sys/run/openvswitch
+LOG_DIR=/var/vcap/sys/log/openvswitch
+CONF_DIR=/var/vcap/jobs/openvswitch/config
+PIDFILE=${RUN_DIR}/dbserver.pid
+
+OVS_PREFIX=/var/vcap/packages/openvswitch
+
+PATH=${OVS_PREFIX}/bin:${OVS_PREFIX}/sbin:${PATH}
+export PATH
+
+source /var/vcap/packages/pid_utils/pid_utils.sh
+
+case $1 in
+  start)
+    pid_guard $PIDFILE "dbserver"
+
+    mkdir -p $DATA_DIR
+    mkdir -p $RUN_DIR
+    mkdir -p $LOG_DIR
+
+    if [ ! -e "${DATA_DIR}/conf.db" ]; then
+      ovsdb-tool create ${DATA_DIR}/conf.db ${OVS_PREFIX}/share/openvswitch/vswitch.ovsschema
+    fi
+
+    if [ ! -e "${DATA_DIR}/vtep.db" ]; then
+      ovsdb-tool create ${DATA_DIR}/vtep.db ${OVS_PREFIX}/share/openvswitch/vtep.ovsschema
+    fi
+
+    modprobe openvswitch || true
+    lsmod | grep -q openvswitch
+
+    ovsdb-server \
+      --pidfile=${PIDFILE} \
+      --log-file=${LOG_DIR}/dbserver.log \
+      --remote=punix:${RUN_DIR}/db.sock \
+      --remote=db:hardware_vtep,Global,managers \
+      ${DATA_DIR}/conf.db \
+      ${DATA_DIR}/vtep.db
+
+    ;;
+
+  stop)
+    kill_and_wait ${PIDFILE}
+
+    ;;
+
+  *)
+    echo "Usage: dbserver_ctl {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0
