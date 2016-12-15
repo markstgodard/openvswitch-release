@@ -9,7 +9,7 @@
 
 
 ## Deploy
-Update bosh manifest to include in `release` and `template` in bosh job:
+Update bosh manifest to include `openvswitch` in `release` and `template` in bosh job:
 
 For example:
 
@@ -47,7 +47,7 @@ releases:
 
 ## bosh-lite
 I used bosh-lite `v9000.131.0` with stemcell `bosh-warden-boshlite-ubuntu-trusty-go_agent` `3312.8` and
-I had to update the linux kernel version in bosh-lite to get openvswitch to compile and deploy properly (see #Issues below).
+I had to update the linux kernel version in bosh-lite to get openvswitch to compile and deploy properly (see Issues below).
 
 ## Issues
 - If deploying in bosh-lite and you see an error like this, you may need to upgrade your bosh-lite linux kernel to match /lib/modules/x.x.x-xx-generic.
