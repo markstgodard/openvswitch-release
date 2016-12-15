@@ -13,7 +13,7 @@ Update bosh manifest to include in `release` and `template` in bosh job:
 
 For example:
 
-### Add to releases
+- Add to releases
 
 ```yaml
 releases:
@@ -25,11 +25,12 @@ releases:
   version: latest
 - name: cf
   version: latest
+  . . .
 - name: openvswitch
   version: latest
 ```
 
-### Add job template
+- Add job template
 
 ```yaml
 - instances: 1
